@@ -30,7 +30,9 @@ def information(array):
     else:
         TYPE = "NUMPY IMAGE"
         ## It is a numpy image
-        size = str(len(array)) + " " + str(len(array[0])) + " " + str(len(array[0][0]))
+        size = 0
+
+            ##str(len(array)) + " " + str(len(array[0])) + " " + str(len(array[0][0]))
         tpe = array.dtype
         data = "none"
         print(array.shape)
@@ -82,17 +84,15 @@ def updateTrackbarValues():
     return redVal, greenVal, blueVal
 
 
-def removeNoise(array):
+def removeNoise(array, its=10):
     """
     :rtype: object
     """
 
-    array = Image.fromarray(convert_to_uint(array))
-    eroded = ndimage.binary_erosion(array)
-    reconstruction = ndimage.binary_propagation(eroded, mask=array)
+    PILified = PILconvert(array)
 
-    ##Output to the console:
-    plt.title("Removed Noise:"), plt.imshow(reconstruction)
+    eroded = ndimage.binary_erosion(PILified, iterations=its)
+    reconstruction = np.array(ndimage.binary_propagation(eroded, mask=PILified), dtype="uint8")
 
     return reconstruction
 
@@ -232,8 +232,6 @@ def contain_colour(array, colour=[255, 255, 255]):
     # This gives us the values of the mask which arent zero, i.e. the ones that contain the colour we want.
     output = mask.nonzero()
 
-    output = format_array(output)
-
     ##Output to the console:
     plt.title("Colour Mask:"), plt.imshow(output), plt.show()
 
@@ -247,24 +245,7 @@ def erosionExample():
     x, y = (32 * np.random.random((2, 20))).astype(np.int)
     square[x, y] = 1
 
-    open_square = ndimage.binary_opening(square)
-
-    eroded_square = ndimage.binary_erosion(square)
-    reconstruction = ndimage.binary_propagation(eroded_square, mask=square)
-
-    plt.figure(figsize=(9.5, 3))
-    plt.subplot(131)
-    plt.imshow(square, cmap=plt.cm.gray, interpolation='nearest')
-    plt.axis('off')
-    plt.subplot(132)
-    plt.imshow(open_square, cmap=plt.cm.gray, interpolation='nearest')
-    plt.axis('off')
-    plt.subplot(133)
-    plt.imshow(reconstruction, cmap=plt.cm.gray, interpolation='nearest')
-    plt.axis('off')
-
-    plt.subplots_adjust(wspace=0, hspace=0.02, top=0.99, bottom=0.01, left=0.01, right=0.99)
-    plt.show()
+    return square
 
 
 def current_time():

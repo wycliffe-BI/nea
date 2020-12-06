@@ -52,6 +52,9 @@ while True:
 
     ## This is the result of the bitwise_and manipulation that is the result of the mask and frame
     result = cv2.bitwise_and(frame, frame, mask=mask)
+
+    result = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
+
     ## Show that frame with the resulting array on it
     cv2.imshow("main", result)
 
@@ -61,13 +64,15 @@ while True:
 
 ## Once the button breaks the while loop, this will close the windows.
 
-##plt.imshow(result),plt.title("norm")
+plt.imshow(result)
+plt.title("normal:")
+plt.show()
 
-newArray = np.array(removeNoise(result), dtype="uint8")
+col = contain_colour(result, [0,0,0])
+newArray = removeNoise(result)
 
-information(newArray)
-
-plt.imshow(newArray), plt.show()
+plt.imshow(newArray)
+plt.show()
 
 # cap.release()
 # cv2.destroyAllWindows()
