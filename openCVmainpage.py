@@ -1,51 +1,43 @@
-import cv2
-import numpy as np
-import datetime
 from functions import *
 
-from numpy import zeros
-
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-cv2.namedWindow("main")
+global precision
+precision = 255
 
 
-def putTimestamp():
-    ## Put a timestamp on it
-    timestamp = datetime.datetime.now()
-    cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+def callback(event, x, y, flags, param):
+    global picker_blue, picker_green, picker_red, precision
+    if event == cv2.EVENT_MOUSEMOVE:  # checks mouse moves
+        colorsBGR = frame[y, x]
+        picker_blue = colorsBGR[0]
+        picker_green = colorsBGR[1]
+        picker_red = colorsBGR[2]
+
+    if event == 1:
+        ##This is the left button down event
+        precision -= 10
+        print("Decreased precision by 10")
+
+    if event == 2:
+        ## This is the right button down event
+        precision += 10
+        print("Increased precision by 10")
 
 
-createTrackbars("main")
+# cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cv2.namedWindow("markers")
+cv2.setMouseCallback('markers', callback)
 
-
-def draw_dot(event, x, y, flags, param, **kwargs):
-    centre = (x, y)
-    radius = 1000
-    colour = (0, 0, 255)
-    thickness = 10
-    if event == cv2.EVENT_LBUTTONDBLCLK:
-        cv2.circle(img, (x, y), 100, (255, 0, 0), -1)
-        ##cv2.circle(result, centre, radius, colour, thickness)
-        print("done callback", x, y)
-
-
-cv2.setMouseCallback("main", draw_dot)
-
+## THIS IS THE CODE TO ISOLATE THE *MARKER* COLOUR
+# ---------------------------------------------------------------------------------------------------------------------
 while True:
-
-    ## Get the latest trackbar values
-    redVal, greenVal, blueVal = updateTrackbarValues()
-
     ## Capture fame by frame
-    ret, frame = cap.read()
+    # ret, frame = cap.read()
 
-    ## Put a timestamp on that frame
-    putTimestamp()
+    frame = cv2.imread("ender.jpg")
 
     ## Create two arrays which are the two colour thresholds
-    lower = np.array([blueVal, greenVal, redVal])
-    upper = np.array([blueVal + 100, greenVal + 100, redVal + 100])
+    lower = np.array([picker_blue - precision, picker_green - precision, picker_red - precision])
+    upper = np.array([picker_blue + precision, picker_green + precision, picker_red + precision])
 
     ## Make a mask from the threshold arrays by combining them
     mask = cv2.inRange(frame, lower, upper)  ##lower, upper
@@ -53,26 +45,64 @@ while True:
     ## This is the result of the bitwise_and manipulation that is the result of the mask and frame
     result = cv2.bitwise_and(frame, frame, mask=mask)
 
-    result = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
+    ##Turn it black and white if we want:
+    # result = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
+
+    ## Save the resultant array as "markers", which is our future array to refer back to the pointers with
+    markers = result
 
     ## Show that frame with the resulting array on it
-    cv2.imshow("main", result)
+    cv2.imshow("markers", result)
 
-    ## Press q to quit
-    if cv2.waitKey(1) & 0xFF == ord("q"):
+    ## Press ENTER to quit
+    if cv2.waitKey(1) & 0xFF == 13:  ##13 is the carriage return key, so will break with enter key
         break
+cv2.destroyAllWindows()
+# ---------------------------------------------------------------------------------------------------------------------
 
-## Once the button breaks the while loop, this will close the windows.
 
-plt.imshow(result)
-plt.title("normal:")
-plt.show()
+## THIS IS THE CODE TO ISOLATE THE FILAMENT COLOUR
+# ---------------------------------------------------------------------------------------------------------------------
+cv2.namedWindow("filament")
+cv2.setMouseCallback('filament', callback)
 
-col = contain_colour(result, [0,0,0])
-newArray = removeNoise(result)
+while True:
+    ## Capture fame by frame
+    # ret, frame = cap.read()
 
-plt.imshow(newArray)
-plt.show()
+    frame = cv2.imread("ender.jpg")
+
+    ## Create two arrays which are the two colour thresholds
+    lower = np.array([picker_blue - precision, picker_green - precision, picker_red - precision])
+    upper = np.array([picker_blue + precision, picker_green + precision, picker_red + precision])
+
+    ## Make a mask from the threshold arrays by combining them
+    mask = cv2.inRange(frame, lower, upper)  ##lower, upper
+
+    ## This is the result of the bitwise_and manipulation that is the result of the mask and frame
+    result = cv2.bitwise_and(frame, frame, mask=mask)
+
+    ## Turn it black and white if we want:
+    # result = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
+
+    ## Save the resultant array as "filament", which is our future array to refer back to the pointers with
+    filament = result
+
+    ## Show that frame with the resulting array on it
+    cv2.imshow("filament", result)
+
+    ## ENTER to quit
+    if cv2.waitKey(1) & 0xFF == 13:  ##13 is the carriage return key, so will break with enter key
+        break
+# ---------------------------------------------------------------------------------------------------------------------
+
 
 # cap.release()
-# cv2.destroyAllWindows()
+cv2.destroyAllWindows()
+
+bw_markers = cv2.cvtColor(markers, cv2.COLOR_BGR2GRAY)
+bw_filament = cv2.cvtColor(filament, cv2.COLOR_BGR2GRAY)
+
+plt.imshow(removeNoise(bw_markers)), plt.title("Markers:"), plt.show()
+plt.imshow(removeNoise(bw_filament)), plt.title("Filament"), plt.show()
+

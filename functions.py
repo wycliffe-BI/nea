@@ -10,6 +10,10 @@ import time
 import datetime
 import skimage.util as skimage
 
+picker_blue = 0
+picker_green = 0
+picker_red = 0
+
 def PILconvert(array):
     ## Converting images from the np format (bool and 3 channels for RGB)
     ## To PIL compatible images with 0-255
@@ -70,18 +74,35 @@ def green(val):
 def blue(val):
     print("Changed Blue to: ", val)
 
+def precision(val):
+    print("Changed precision to", val)
+
 
 def createTrackbars(window):
-    cv2.createTrackbar("Red", window, 0, 255, red)
-    cv2.createTrackbar("Green", window, 0, 255, green)
-    cv2.createTrackbar("Blue", window, 0, 255, blue)
+    #cv2.createTrackbar("Red", window, 0, 255, red)
+    #cv2.createTrackbar("Green", window, 0, 255, green)
+    #cv2.createTrackbar("Blue", window, 0, 255, blue)
+    cv2.createTrackbar("Precision", window, 0, 255, precision)
+
+def putTimestamp():
+    ## Put a timestamp on it
+    timestamp = datetime.datetime.now()
+    cv2.putText(frame, timestamp.strftime("%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+
+
 
 
 def updateTrackbarValues():
-    redVal = cv2.getTrackbarPos("Red", "main")
-    greenVal = cv2.getTrackbarPos("Green", "main")
-    blueVal = cv2.getTrackbarPos("Blue", "main")
-    return redVal, greenVal, blueVal
+
+    ##Old system for using indevidual channel changes (pre- mouse control)
+    #redVal = cv2.getTrackbarPos("Red", "main")
+    #greenVal = cv2.getTrackbarPos("Green", "main")
+    #blueVal = cv2.getTrackbarPos("Blue", "main")
+
+    precision = cv2.getTrackbarPos("Precision", "main")
+    #return precision, redVal, greenVal, blueVal,
+    return precision
 
 
 def removeNoise(array, its=10):
@@ -250,3 +271,13 @@ def erosionExample():
 
 def current_time():
     return str(datetime.datetime.now())
+
+def draw_dot(event, x, y, flags, param, **kwargs):
+    centre = (x, y)
+    radius = 1000
+    colour = (0, 0, 255)
+    thickness = 10
+    if event == cv2.EVENT_LBUTTONDBLCLK:
+        cv2.circle(frame, (x, y), 100, (255, 0, 0), -1)
+        ##cv2.circle(result, centre, radius, colour, thickness)
+        print("done callback", x, y)
