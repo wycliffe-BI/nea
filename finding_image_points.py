@@ -1,6 +1,12 @@
+## Brendan Ind 2020
+
+## This file is for all the handling of the image realated data point collections,
+## for example, this finds the points of the markers and the filament
+## For the most part this code comes from  openCVmainpage.py
+
+
 from functions import *
 import os
-
 global precision
 precision = 255
 
@@ -23,13 +29,13 @@ def callback(event, x, y, flags, param):
         precision += 10
         print("Increased precision by 10")
 
-
 # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-cv2.namedWindow("markers")
-cv2.setMouseCallback('markers', callback)
+
 
 ## THIS IS THE CODE TO ISOLATE THE *MARKER* COLOUR
 # ---------------------------------------------------------------------------------------------------------------------
+cv2.namedWindow("markers")
+cv2.setMouseCallback('markers', callback)
 while True:
     ## Capture fame by frame
     # ret, frame = cap.read()
@@ -66,7 +72,6 @@ cv2.destroyAllWindows()
 # ---------------------------------------------------------------------------------------------------------------------
 cv2.namedWindow("filament")
 cv2.setMouseCallback('filament', callback)
-
 while True:
     ## Capture fame by frame
     # ret, frame = cap.read()
@@ -97,38 +102,20 @@ while True:
         break
 # ---------------------------------------------------------------------------------------------------------------------
 
-bw_markers = cv2.cvtColor(markers, cv2.COLOR_BGR2GRAY)
-bw_filament = cv2.cvtColor(filament, cv2.COLOR_BGR2GRAY)
-
-## Let's store these arrays in a text file
-with open("markers.txt", "w") as file:
-    file.write(str(markers))
-with open("filament.txt", "w") as file:
-    file.write(str(filament))
 
 # cap.release()
 cv2.destroyAllWindows()
 
+bw_markers = cv2.cvtColor(markers, cv2.COLOR_BGR2GRAY)
+bw_filament = cv2.cvtColor(filament, cv2.COLOR_BGR2GRAY)
 
-## Lets show the currently captured arrays to the user to see if they are happy with them:
 plt.imshow(removeNoise(bw_markers)), plt.title("Markers:"), plt.show()
 plt.imshow(removeNoise(bw_filament)), plt.title("Filament"), plt.show()
 
 
 
-## If the ARE NOT HAPPY with the current arrays:
-if input("Run again? y/N") == "y":
-    ## Open a new instace of this file so they can chose the new array:
-    exec(open('openCVmainpage.py').read())
+def
+print("Are these ok?")
+a = input("")
 
-## Else they are happy so we read what is currently in the text files (since this contains the array they're happy with)
-else:
-    with open("markers.txt", "r") as file:
-        marker = file.read()
-    with open("filament.txt", "r") as file:
-        filament = file.read()
-
-
-## We then show those arrays:
-plt.imshow(removeNoise(bw_markers)), plt.title("[recvd from txt] Markers:"), plt.show()
-plt.imshow(removeNoise(bw_filament)), plt.title("[recvd from txt] Filament"), plt.show()
+exec(open('openCVmainpage.py').read())
