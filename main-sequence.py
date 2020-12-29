@@ -1,4 +1,8 @@
 ## Brendan Ind
+## Main launch file
+
+## RUN ME!!!!!!
+## (Ensure you have the requirements.txt installed.)
 
 from functions import *
 from filament_marker_selection import select

@@ -1,4 +1,5 @@
-##gui file
+## Brendan Ind
+## GUI File
 
 ## Imports
 # -------------------------------------#

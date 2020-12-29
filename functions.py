@@ -1,3 +1,5 @@
+## Brendan Ind
+
 import cv2
 from sklearn.feature_extraction import image
 from sklearn.cluster import spectral_clustering
