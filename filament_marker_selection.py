@@ -29,12 +29,12 @@ def select(marker=True, filament=False):
         if event == 1:
             ##This is the left button down event
             precision -= 10
-            print("Decreased precision by 10")
+            print("Decreased precision by 10 (%s)" %(precision))
 
         if event == 2:
             ## This is the right button down event
             precision += 10
-            print("Increased precision by 10")
+            print("Increased precision by 10(%s)" %(precision))
 
     # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     cv2.namedWindow("markers")
