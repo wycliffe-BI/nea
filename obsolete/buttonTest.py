@@ -1,6 +1,7 @@
 import cv2
-from functions import
+from functions import *
 
+cv2.startWindowThread()
 
 def back(*args):
     pass
