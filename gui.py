@@ -7,12 +7,10 @@ from random import randint
 from PIL import ImageTk, Image
 import numpy as np
 import sys
-
+from functions import *
 # -------------------------------------#
 
 global ok
-ok = False
-
 
 def newUser():
     print("Creating a new user")
@@ -30,22 +28,14 @@ def changeLabel(label, text):
     label.config(text=str(text))
 
 
-def main_page():
-    mainPage = tk.Tk()
-    mainPage.title("Overview")
-    mainPage.geometry("800x800")
-
-    testLabel = tk.Label(mainPage, text="main page for all the overview stuff")
-
-    return mainPage
-
-
 def success():
+    global ok
     ok = True
     print("Success, arrays are good.")
 
 
 def fail():
+    global ok
     ok = False
     print("We need to redo the arrays.")
 
@@ -84,7 +74,16 @@ def login_page():
     return window
 
 
-def mask_check(markers, filament):
+def main_page():
+    mainPage = tk.Tk()
+    mainPage.title("Overview")
+    mainPage.geometry("800x800")
+
+
+def checking_page(markers, filament):
+    global ok
+    ok = 3
+
     window = tk.Tk()
     window.attributes('-fullscreen', True)
     window.title("Confirmation")
@@ -103,22 +102,20 @@ def mask_check(markers, filament):
     redo_btn = tk.Button(window, text="redo", relief=tk.RIDGE, command=lambda: [fail(), window.destroy()], width=50)
     redo_btn.pack(side="bottom", fill="y")
 
-    ## FILAMENT LABEL
-    filament_path = "ender.jpg"
-    filament_img = ImageTk.PhotoImage(Image.open(filament_path))
-    filament = tk.Label(window, image=filament_img)
-    filament.pack(side="left", fill="none", expand="yes")
-
     ## MARKERS LABEL
     markers_path = "ender.jpg"
-    markers_img = ImageTk.PhotoImage(Image.open(markers_path))
+    markers_img = ImageTk.PhotoImage(markers)  ##Image.open(markers_path)
     markers = tk.Label(window, image=markers_img)
     markers.pack(side="left", fill="none", expand="yes")
+
+    ## FILAMENT LABEL
+    filament_path = "ender.jpg"
+    filament_img = ImageTk.PhotoImage(filament) ##Image.open(filament_path)
+    filament = tk.Label(window, image=filament_img)
+    filament.pack(side="right", fill="none", expand="yes")
+
 
     ## MAINLOOP
     window.mainloop()
 
     return ok
-
-
-mask_check(1, 2)

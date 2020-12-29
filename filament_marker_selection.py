@@ -2,21 +2,10 @@
 
 from functions import *
 
+def select(windowName="ERROR: Window name not set"):
 
-def select(marker=True, filament=False):
-    if (marker == True) and (filament == False):
-        windowName = "Select the marker colour"
-
-    elif (filament == True) and (marker == False):
-        windowName = "Select the colour of the filament"
-
-    else:
-        ##Housten we have a problem since if this branch happens either neither were true, or both were. Das bad.
-        return False
-
-    ## ACTUAL USEFUL CODE STARTS:
     global precision
-    precision = 255
+    precision = 150
 
     def callback(event, x, y, flags, param):
         global picker_blue, picker_green, picker_red, precision
@@ -37,8 +26,8 @@ def select(marker=True, filament=False):
             print("Increased precision by 10(%s)" %(precision))
 
     # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-    cv2.namedWindow("markers")
-    cv2.setMouseCallback('markers', callback)
+    cv2.namedWindow(windowName)
+    cv2.setMouseCallback(windowName, callback)
 
     ## THIS IS THE CODE TO ISOLATE THE COLOUR WE WANT
     # ---------------------------------------------------------------------------------------------------------------------
@@ -46,7 +35,7 @@ def select(marker=True, filament=False):
         ## Capture fame by frame
         # ret, frame = cap.read()
 
-        frame = cv2.imread("ender.jpg")
+        frame = cv2.imread("ender2.jpg")
 
         ## Create two arrays which are the two colour thresholds
         lower = np.array([picker_blue - precision, picker_green - precision, picker_red - precision])
@@ -59,12 +48,12 @@ def select(marker=True, filament=False):
         result = cv2.bitwise_and(frame, frame, mask=mask)
 
         ## Save the resultant array as "markers", which is our future array to refer back to the pointers with
-        markers = result
-        bw_markers = cv2.cvtColor(markers, cv2.COLOR_BGR2GRAY)
-        clean_markers = removeNoise(bw_markers)
+        out = result
+        out_bw = cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
+        out_clean = removeNoise(out_bw, its=5)
 
         ## Show that frame with the resulting array on it
-        cv2.imshow("markers", markers)
+        cv2.imshow(windowName, out)
 
         ## Press ENTER to quit
         if cv2.waitKey(1) & 0xFF == 13:  ##13 is the carriage return key, so will break with enter key
@@ -72,5 +61,4 @@ def select(marker=True, filament=False):
     cv2.destroyAllWindows()
     # ---------------------------------------------------------------------------------------------------------------------
 
-
-print(select())
+    return out, out_bw, out_clean

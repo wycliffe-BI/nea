@@ -118,4 +118,4 @@ def
 print("Are these ok?")
 a = input("")
 
-exec(open('../openCVmainpage.py').read())
+exec(open('openCVmainpage.py').read())
