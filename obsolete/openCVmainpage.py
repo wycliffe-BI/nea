@@ -33,7 +33,7 @@ while True:
     ## Capture fame by frame
     # ret, frame = cap.read()
 
-    frame = cv2.imread("../ender.jpg")
+    frame = cv2.imread("../img/ender.jpg")
 
     ## Create two arrays which are the two colour thresholds
     lower = np.array([picker_blue - precision, picker_green - precision, picker_red - precision])
@@ -69,7 +69,7 @@ while True:
     ## Capture fame by frame
     # ret, frame = cap.read()
 
-    frame = cv2.imread("../ender.jpg")
+    frame = cv2.imread("../img/ender.jpg")
 
     ## Create two arrays which are the two colour thresholds
     lower = np.array([picker_blue - precision, picker_green - precision, picker_red - precision])

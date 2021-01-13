@@ -3,7 +3,7 @@
 from functions import *
 
 
-def findCircles(array=cv2.imread("dots_clean.jpg", cv2.IMREAD_GRAYSCALE)):
+def findCircles(array=cv2.imread("img/dots_clean.jpg", cv2.IMREAD_GRAYSCALE)):
     img = array  ## cv2.imread("../dots_clean.jpg", cv2.IMREAD_GRAYSCALE) if we not having an array
 
     ## Get a threshold from that arrray
@@ -13,15 +13,15 @@ def findCircles(array=cv2.imread("dots_clean.jpg", cv2.IMREAD_GRAYSCALE)):
     params = cv2.SimpleBlobDetector_Params()
 
     # Set up the PIXEL COLOUR threshold
-    params.minThreshold = 150
+    params.minThreshold = 50
     params.maxThreshold = 255
 
     ## Set cup the CIRCULARITY thresholds
     params.filterByCircularity = False
-    params.minCircularity = 0.0001
+    params.minCircularity = 0.000001
 
     ## Set up the AREA thresholds
-    params.filterByArea = True
+    params.filterByArea = False
     params.minArea = 1
 
     ## Set up the detector

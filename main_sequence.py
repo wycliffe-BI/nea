@@ -11,15 +11,20 @@ from gui import *
 import sys
 from finding_blobs import *
 
-
 ## RUN LOGIN PAGE
+##---------------------------------------------------------------##
 
 
+##---------------------------------------------------------------##
+
+
+## GET THE CORRECT ARRAYS:
+##---------------------------------------------------------------##
 proceed = False
 while not proceed:
-    markers, markers_bw, markers_clean = select("Select the marker colour")
+    markers, markers_bw, markers_clean, markers_original = select("Select the marker colour")
     print("Got the marker array")
-    filament, filament_bw, filament_clean = select("Select the filament colour")
+    filament, filament_bw, filament_clean, filament_original = select("Select the filament colour")
     print("Got the filament array")
 
     proceed = checking_page(PILconvert(markers_clean), PILconvert(filament_clean))
@@ -28,23 +33,35 @@ while not proceed:
         print("Exit button was clicked in the tkinter window")
         sys.exit()
 print("Exited the loop with the correct arrays")
+##---------------------------------------------------------------##
 
 
-## Code to draw circles around the MARKERS
-marker_points, marker_circle_array = findCircles(markers_clean)
+## IMAGE RESIZING
+##---------------------------------------------------------------##
+filament_clean = resize(filament_clean, 300, 200)
+markers_clean = resize(markers_clean, 300, 200)
 
-print(marker_points)
+filament = resize(filament, 300, 200)
+markers = resize(markers, 300, 200)
+print("Finished resizing images")
+##---------------------------------------------------------------##
 
 
-filament_clean = cv2.imread("filament_example.png")
+## FIND BBOX AND CIRCLES IN THE ARRAYS:
+##---------------------------------------------------------------##
+##MARKERS:
+marker_points, marker_circle_array = findCircles(markers_bw)
+print("Marker points:", marker_points)
 
-## Code to draw a box around the FILAMENT
+##FILAMENT:
+# filament_clean = cv2.imread("filament_example.png")
 lowest, highest, rightmost, leftmost = find_filament(filament_clean)
-filament_box_array = putBox(filament_clean, (highest, leftmost), (lowest, rightmost))
+filament_box_array = putBox(filament, (highest, leftmost), (lowest, rightmost))
+##---------------------------------------------------------------##
 
 
-plt.imshow(marker_circle_array), plt.show()
-plt.imshow(filament_box_array), plt.show()
-
-
-
+## SHOW THE IMAGES
+##---------------------------------------------------------------##
+plt3("Normal:", filament_original, "Filament-BW", filament_bw, "Marker-BW", markers_bw)
+plt3("Normal:", filament_original, "Filament ROI:", filament_box_array, "Markers Circled:", marker_circle_array)
+##---------------------------------------------------------------##

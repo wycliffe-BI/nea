@@ -104,13 +104,13 @@ def checking_page(markers, filament):
     redo_btn.pack(side="bottom", fill="y")
 
     ## MARKERS LABEL
-    markers_path = "ender.jpg"
+    markers_path = "img/ender.jpg"
     markers_img = ImageTk.PhotoImage(markers)  ##Image.open(markers_path)
     markers = tk.Label(window, image=markers_img)
     markers.pack(side="left", fill="none", expand="yes")
 
     ## FILAMENT LABEL
-    filament_path = "ender.jpg"
+    filament_path = "img/ender.jpg"
     filament_img = ImageTk.PhotoImage(filament) ##Image.open(filament_path)
     filament = tk.Label(window, image=filament_img)
     filament.pack(side="right", fill="none", expand="yes")

@@ -35,7 +35,7 @@ def select(windowName="ERROR: Window name not set"):
         ## Capture fame by frame
         # ret, frame = cap.read()
 
-        frame = cv2.imread("ender2.jpg")
+        frame = cv2.imread("img/ender_proper.jpg")
 
         ## Create two arrays which are the two colour thresholds
         lower = np.array([picker_blue - precision, picker_green - precision, picker_red - precision])
@@ -47,10 +47,11 @@ def select(windowName="ERROR: Window name not set"):
         ## This is the result of the bitwise_and manipulation that is the result of the mask and frame
         result = cv2.bitwise_and(frame, frame, mask=mask)
 
-        ## Save the resultant array as "markers", which is our future array to refer back to the pointers with
+        ## Save the resultant array as "arrays", which is our future array to refer back to the pointers with
+        out_original = frame
         out = result
         out_bw = cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
-        out_clean = removeNoise(out_bw, its=5)
+        out_clean = removeNoise(out, its=1)
 
         ## Show that frame with the resulting array on it
         cv2.imshow(windowName, out)
@@ -61,4 +62,4 @@ def select(windowName="ERROR: Window name not set"):
     cv2.destroyAllWindows()
     # ---------------------------------------------------------------------------------------------------------------------
 
-    return out, out_bw, out_clean
+    return out, out_bw, out_clean, out_original

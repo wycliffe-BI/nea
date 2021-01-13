@@ -16,11 +16,19 @@ picker_blue = 0
 picker_green = 0
 picker_red = 0
 
+
 def PILconvert(array):
     ## Converting images from the np format (bool and 3 channels for RGB)
     ## To PIL compatible images with 0-255
 
     return Image.fromarray((array * 255).astype(np.uint8))
+
+
+def resize(array, width, height):
+    dsize = (width, height)
+    output = cv2.resize(array, dsize)
+    return output
+
 
 def img_to_uint8(array):
     return skimage.img_as_ubyte(array)
@@ -38,7 +46,7 @@ def information(array):
         ## It is a numpy image
         size = 0
 
-            ##str(len(array)) + " " + str(len(array[0])) + " " + str(len(array[0][0]))
+        ##str(len(array)) + " " + str(len(array[0])) + " " + str(len(array[0][0]))
         tpe = array.dtype
         data = "none"
         print(array.shape)
@@ -54,7 +62,7 @@ def information(array):
     type(ary):  %s
     Adtl Data:  %s
     
-    '''%(TYPE, size, tpe, str(type(array)), data))
+    ''' % (TYPE, size, tpe, str(type(array)), data))
     print("----------------------")
 
 
@@ -76,15 +84,17 @@ def green(val):
 def blue(val):
     print("Changed Blue to: ", val)
 
+
 def precision(val):
     print("Changed precision to", val)
 
 
 def createTrackbars(window):
-    #cv2.createTrackbar("Red", window, 0, 255, red)
-    #cv2.createTrackbar("Green", window, 0, 255, green)
-    #cv2.createTrackbar("Blue", window, 0, 255, blue)
+    # cv2.createTrackbar("Red", window, 0, 255, red)
+    # cv2.createTrackbar("Green", window, 0, 255, green)
+    # cv2.createTrackbar("Blue", window, 0, 255, blue)
     cv2.createTrackbar("Precision", window, 0, 255, precision)
+
 
 def putTimestamp():
     ## Put a timestamp on it
@@ -93,17 +103,14 @@ def putTimestamp():
                 cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
 
-
-
 def updateTrackbarValues():
-
     ##Old system for using indevidual channel changes (pre- mouse control)
-    #redVal = cv2.getTrackbarPos("Red", "main")
-    #greenVal = cv2.getTrackbarPos("Green", "main")
-    #blueVal = cv2.getTrackbarPos("Blue", "main")
+    # redVal = cv2.getTrackbarPos("Red", "main")
+    # greenVal = cv2.getTrackbarPos("Green", "main")
+    # blueVal = cv2.getTrackbarPos("Blue", "main")
 
     precision = cv2.getTrackbarPos("Precision", "main")
-    #return precision, redVal, greenVal, blueVal,
+    # return precision, redVal, greenVal, blueVal,
     return precision
 
 
@@ -274,6 +281,7 @@ def erosionExample():
 def current_time():
     return str(datetime.datetime.now())
 
+
 def draw_dot(event, x, y, flags, param, **kwargs):
     centre = (x, y)
     radius = 1000
@@ -283,3 +291,25 @@ def draw_dot(event, x, y, flags, param, **kwargs):
         cv2.circle(frame, (x, y), 100, (255, 0, 0), -1)
         ##cv2.circle(result, centre, radius, colour, thickness)
         print("done callback", x, y)
+
+
+def plt3(array1name, array1, array2name, array2, array3name, array3):
+    plt.figure(figsize=(9.5, 3))
+
+    ##array1:
+    plt.subplot(131)
+    plt.imshow(array1, cmap=plt.cm.gray, interpolation='nearest')
+    plt.title(array1name)
+
+    ##array2:
+    plt.subplot(132)
+    plt.imshow(array2, cmap=plt.cm.gray, interpolation='nearest')
+    plt.title(array2name)
+
+    ##array3:
+    plt.subplot(133)
+    plt.imshow(array3, cmap=plt.cm.gray, interpolation='nearest')
+    plt.title(array3name)
+
+    plt.subplots_adjust(wspace=0, hspace=0.02, top=0.99, bottom=0.01, left=0.01, right=0.99)
+    plt.show()
