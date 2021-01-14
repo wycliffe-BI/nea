@@ -6,8 +6,8 @@ import cv2
 from time import sleep
 
 
-def find_filament(array):
-    file = open("logs.txt", "w")
+def find_non_black_pixels(array):
+    #file = open("logs.txt", "w")
 
     flag = False
     changed_leftmost = False
@@ -39,7 +39,7 @@ def find_filament(array):
             ## BE AWARE THAT WE WILL NEED TO CHANGE THIS IF STATEMENT DEPENDING ON THE FORMAT OF THE ARRAY SEARCHING
             ## some have other s like [0, 0, 0,] not [0 0 0]:
             ## TODO
-
+            print(current_pixel)
             if current_pixel != "[0 0 0]":
                 ## We dont have a black pixel. We need to do something with the x and y values here.
                 flag = True
@@ -48,51 +48,41 @@ def find_filament(array):
                     highest = yPos
                     ## Set the pixel we identified to neon pink so we can look at it later
 
-                    #array[xPos][yPos] = [255, 0, 0]
+                    array[xPos][yPos] = [255, 0, 0]
                     #changed_highest = True
 
                 if leftmost > xPos:
                     leftmost = xPos
                     ## Set the array that we are looking at as neon pink:
 
-                    #array[xPos][yPos] = [255, 0, 0]
+                    array[xPos][yPos] = [255, 0, 0]
                     #changed_leftmost = True
 
                 if rightmost < xPos:
                     ## We have a new righmost pixel so we update counter:
                     rightmost = xPos
 
-                    #array[xPos][yPos] = [255, 0, 0]
+                    array[xPos][yPos] = [255, 0, 0]
                     #changed_rightmost = True
 
                 if lowest < yPos:
                     ## Same reason, we have a new lower pixel so we update that var with te lowest so far
                     lowest = yPos
 
-                    #array[xPos][yPos] = [255, 0, 0]
+                    array[xPos][yPos] = [255, 0, 0]
                     #changed_lowest = True
-
-            #file.write(
-            #    "Pos in array:    [%s,%s] ->  %s      flagd_pix:%s    High:%s::%s     Low:%s::%s      Left:%s::%s     Right:%s::%s   pix:%s\n" % (
-            #    xPos, yPos, current_pixel, flag, changed_highest, highest, changed_lowest, lowest, changed_leftmost,
-            #    leftmost, changed_rightmost, rightmost, str(array[xPos][yPos])))
-            #flag = False
-            #changed_highest = False
-            #changed_lowest = False
-            #changed_rightmost = False
-            #changed_leftmost = False
-
-    #array[rightmost][highest] = [0, 0, 255]
-    #array[rightmost][lowest] = [0, 0, 255]
-    #array[leftmost][highest] = [0, 0, 255]
-    #array[leftmost][lowest] = [0, 0, 255]
-
-    #plt.imshow(array), plt.title("OUTPUT:"), plt.show()
-    #file.close()
 
     print("low:%s, high:%s, right:%s, left:%s" %(lowest, highest, rightmost, leftmost))
 
-    return lowest, highest, rightmost, leftmost
+    array[rightmost][highest] = [0, 0, 255]
+    array[leftmost][highest] = [0, 0, 255]
+    array[rightmost][lowest] = [0, 0, 255]
+    array[leftmost][lowest] = [0, 0, 255]
+
+    ##plt.imshow(array), plt.title("Look for blues"), plt.show()
+
+    return lowest, highest, rightmost, leftmost, array
+
 
 def init_tracking(frame, bbox, tracker=cv2.TrackerMIL_create()):
     ok = tracker.init(frame, bbox)

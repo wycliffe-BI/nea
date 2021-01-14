@@ -1,9 +1,8 @@
-## Brendan Ind
+## Brendan Ind 2020-2021 A-Level CS NEA
 ## Main launch file
 
 ## RUN ME!!!!!!
 ## (Ensure you have the requirements.txt installed.)
-
 from functions import *
 from filament_marker_selection import select
 from object_tracking import *
@@ -47,21 +46,22 @@ print("Finished resizing images")
 ##---------------------------------------------------------------##
 
 
-## FIND BBOX AND CIRCLES IN THE ARRAYS:
+## FIND MARKER ROIs:
 ##---------------------------------------------------------------##
-##MARKERS:
-marker_points, marker_circle_array = findCircles(markers_bw)
-print("Marker points:", marker_points)
+##Split into 4 quadrants
+tr, tl, br, bl = quadrant(markers_clean)
 
-##FILAMENT:
+##Return the ROI's for each quadrant:
+tr_lowest, tr_highest, tr_right, tr_left, tr = find_non_black_pixels(tr)
+tl_lowest, tl_highest, tl_right, tl_left, tl = find_non_black_pixels(tl)
+br_lowest, br_highest, br_right, br_left, br = find_non_black_pixels(br)
+bl_lowest, bl_highest, bl_right, bl_left, bl = find_non_black_pixels(bl)
+##---------------------------------------------------------------##
+
+
+##FIND FILAMENT ROIs:
+##---------------------------------------------------------------##
 # filament_clean = cv2.imread("filament_example.png")
-lowest, highest, rightmost, leftmost = find_filament(filament_clean)
-filament_box_array = putBox(filament, (highest, leftmost), (lowest, rightmost))
-##---------------------------------------------------------------##
-
-
-## SHOW THE IMAGES
-##---------------------------------------------------------------##
-plt3("Normal:", filament_original, "Filament-BW", filament_bw, "Marker-BW", markers_bw)
-plt3("Normal:", filament_original, "Filament ROI:", filament_box_array, "Markers Circled:", marker_circle_array)
+fil_lowest, fil_highest, fil_rightmost, fil_leftmost = find_non_black_pixels(filament_clean)
+filament_box_array = putBox(filament, (fil_highest, fil_leftmost), (fil_lowest, fil_rightmost))
 ##---------------------------------------------------------------##

@@ -113,8 +113,6 @@ plt.imshow(removeNoise(bw_markers)), plt.title("Markers:"), plt.show()
 plt.imshow(removeNoise(bw_filament)), plt.title("Filament"), plt.show()
 
 
-
-def
 print("Are these ok?")
 a = input("")
 
