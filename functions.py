@@ -313,3 +313,45 @@ def plt3(array1name, array1, array2name, array2, array3name, array3):
 
     plt.subplots_adjust(wspace=0, hspace=0.02, top=0.99, bottom=0.01, left=0.01, right=0.99)
     plt.show()
+
+
+def quadrant(array=cv2.imread("img/quadrants.jpg")):
+    width = len(array[0])
+    height = len(array)
+
+    print("\n----------------------------------")
+    print("Splitting the image into quadrants")
+    print("width:", width)
+    print("height:", height)
+
+    TR = array[
+
+                    :   width//2,
+         height//2  :   ,
+                    :
+
+         ]
+
+    TL = array[
+
+                    :   width//2,
+                    :   height//2,
+                    :
+         ]
+
+    BR = array[
+         width//2   :   ,
+         height//2  :   ,
+                    :
+         ]
+
+    BL = array[
+
+         width//2   :   ,
+                    :   height//2,
+                    :
+
+         ]
+
+    print("----------------------------------\n")
+    return TR, TL, BR, BL

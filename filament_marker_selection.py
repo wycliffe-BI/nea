@@ -31,11 +31,14 @@ def select(windowName="ERROR: Window name not set"):
 
     ## THIS IS THE CODE TO ISOLATE THE COLOUR WE WANT
     # ---------------------------------------------------------------------------------------------------------------------
-    while True:
-        ## Capture fame by frame
-        # ret, frame = cap.read()
+    ## Capture fame by frame
+    cap = cv2.VideoCapture(0)
+    ret, frame = cap.read()
+    unedited = frame
 
-        frame = cv2.imread("img/ender_proper.jpg")
+    while True:
+        frame = unedited
+        #frame = cv2.imread("img/ender_proper.jpg")
 
         ## Create two arrays which are the two colour thresholds
         lower = np.array([picker_blue - precision, picker_green - precision, picker_red - precision])
@@ -60,6 +63,7 @@ def select(windowName="ERROR: Window name not set"):
         if cv2.waitKey(1) & 0xFF == 13:  ##13 is the carriage return key, so will break with enter key
             break
     cv2.destroyAllWindows()
+    cap.release()
     # ---------------------------------------------------------------------------------------------------------------------
 
     return out, out_bw, out_clean, out_original
