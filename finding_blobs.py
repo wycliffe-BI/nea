@@ -6,7 +6,7 @@ from functions import *
 def findCircles(array=cv2.imread("img/dots_clean.jpg", cv2.IMREAD_GRAYSCALE)):
     img = array  ## cv2.imread("../dots_clean.jpg", cv2.IMREAD_GRAYSCALE) if we not having an array
 
-    ## Get a threshold from that arrray
+    ## Get a threshold from that array
     retval, threshold = cv2.threshold(img, 200, 255, cv2.THRESH_BINARY_INV)
 
     ## Create a parameter object
@@ -36,3 +36,13 @@ def findCircles(array=cv2.imread("img/dots_clean.jpg", cv2.IMREAD_GRAYSCALE)):
                                          cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 
     return points, img_with_circles
+
+
+
+frame = cv2.imread("img/blobs.jpg")
+
+points, circled = findCircles(frame)
+
+cv2.imshow("window", circled)
+
+cv2.waitKey(0)
