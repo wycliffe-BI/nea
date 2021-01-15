@@ -1,6 +1,7 @@
 ## Brendan Ind
 
 from functions import *
+import urllib
 
 def select(windowName="ERROR: Window name not set"):
 
@@ -31,7 +32,8 @@ def select(windowName="ERROR: Window name not set"):
 
     ## THIS IS THE CODE TO ISOLATE THE COLOUR WE WANT
     # ---------------------------------------------------------------------------------------------------------------------
-    ## Capture fame by frame
+    #cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    #cap = cv2.VideoCapture('http://192.168.5.45:8080/videofeed')
     cap = cv2.VideoCapture(0)
     ret, frame = cap.read()
     unedited = frame

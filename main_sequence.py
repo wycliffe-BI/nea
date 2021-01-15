@@ -34,6 +34,7 @@ while not proceed:
 print("Exited the loop with the correct arrays")
 ##---------------------------------------------------------------##
 
+tr = cv2.selectROI("window", markers_clean, showCrosshair=True)
 
 ## IMAGE RESIZING
 ##---------------------------------------------------------------##
