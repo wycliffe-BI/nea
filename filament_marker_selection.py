@@ -40,12 +40,14 @@ def select(windowName="ERROR: Window name not set"):
         frame = unedited
         #frame = cv2.imread("img/ender_proper.jpg")
 
+        frame = resize(frame, 500, 500)
         ## Create two arrays which are the two colour thresholds
         lower = np.array([picker_blue - precision, picker_green - precision, picker_red - precision])
-        upper = np.array([picker_blue + precision, picker_green + precision, picker_red + precision])
+        upper = np.array([picker_blue+precision , picker_green+precision, picker_red+precision])
 
         ## Make a mask from the threshold arrays by combining them
         mask = cv2.inRange(frame, lower, upper)  ##lower, upper
+
 
         ## This is the result of the bitwise_and manipulation that is the result of the mask and frame
         result = cv2.bitwise_and(frame, frame, mask=mask)
