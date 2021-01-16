@@ -3,12 +3,9 @@
 
 ## RUN ME!!!!!!
 ## (Ensure you have the requirements.txt installed.)
-from functions import *
-from filament_marker_selection import select
-from object_tracking import *
-from gui import *
-import sys
-from finding_blobs import *
+from obsolete.filament_marker_selection import select
+from obsolete.object_tracking import *
+from obsolete.finding_blobs import *
 
 ## RUN LOGIN PAGE
 ##---------------------------------------------------------------##

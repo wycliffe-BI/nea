@@ -315,7 +315,7 @@ def plt3(array1name, array1, array2name, array2, array3name, array3):
     plt.show()
 
 
-def quadrant(array=cv2.imread("img/quadrants.jpg")):
+def quadrant(array=cv2.imread("../img/quadrants.jpg")):
     width = len(array[0])
     height = len(array)
 

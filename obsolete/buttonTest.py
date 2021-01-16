@@ -1,5 +1,4 @@
-import cv2
-from functions import *
+from obsolete.functions import *
 
 cv2.startWindowThread()
 

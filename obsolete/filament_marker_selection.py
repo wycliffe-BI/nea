@@ -1,7 +1,7 @@
 ## Brendan Ind
 
-from functions import *
-import urllib
+from obsolete.functions import *
+
 
 def select(windowName="ERROR: Window name not set"):
 

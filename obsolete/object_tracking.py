@@ -1,9 +1,7 @@
 ## Brendan Ind
 ## Object Tracking code
 
-from functions import *
 import cv2
-from time import sleep
 
 
 def find_non_black_pixels(array):

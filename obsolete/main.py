@@ -1,33 +1,19 @@
-## Brendan Ind 2020-2021 A-Level CS NEA
-## Main launch file
-
-## RUN ME!!!!!!
-## (Ensure you have the requirements.txt installed.)
-
-import sys
-import cv2
+## Brendan Ind
+from obsolete.roi_select import *
+from obsolete.gui import *
 from time import sleep
-import A_login_gui as login
-import B_calibration as calib
-import C_checker_gui as checker
-import D_trackers as tracking
-import E_error_detection as err
-import F_user_alert as alerts
-import G_3dp_control as control
-import misc
 
 proceed = False
 
 while not proceed:
     ## Get a frame of the camera
-    clean = calib.get_frame()
+    clean = get_frame()
 
     ## Get the ROI's for the filament and the markers
-    filament = calib.roi_select(clean, "Filament Selection", "Select the FILAMENT. Press C to cancel, ESC to exit, "
-                                                             "and ENTER to save a ROI")
-    markers = calib.roi_select(clean, "Marker Selection",
-                               "Select the MARKERS. Press C to cancel, ESC to exit, and ENTER to "
-                               "save a ROI")
+    filament = roi_select(clean, "Filament Selection", "Select the FILAMENT. Press C to cancel, ESC to exit, "
+                                                       "and ENTER to save a ROI")
+    markers = roi_select(clean, "Marker Selection", "Select the MARKERS. Press C to cancel, ESC to exit, and ENTER to "
+                                                    "save a ROI")
 
     ## Clean up and allow camera to close.
     cv2.waitKey(0)
@@ -74,25 +60,10 @@ while not proceed:
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-    proceed = checker.checking_page(misc.PILconvert(frame_with_boxes))
+    proceed = checking_page(PILconvert(filament_frame), PILconvert(marker_frame))
 
     if proceed == 3:
         print("Exit button was clicked in the tkinter window")
         sys.exit()
 print("Exited the loop with the correct arrays")
 ##---------------------------------------------------------------##
-
-## Initiate some trackers:
-
-## A dictionary to store all the tracker objects in
-trackers = {}
-
-while True:
-    ##MAINLOOP
-
-    ## Update the frame
-    frame = calib.get_frame()
-
-    ## If frame is False bool then camera not captured correctly
-    if not frame:
-        print("Capture Error")

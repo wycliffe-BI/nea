@@ -1,6 +1,5 @@
 ##Blob detection work
 
-from finding_blobs import findCircles
 import cv2
 import numpy as np
 

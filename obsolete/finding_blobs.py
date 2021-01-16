@@ -1,11 +1,9 @@
 ## Brendan Ind
 
-from functions import *
-import sys
+from obsolete.functions import *
 
 
-
-def findCircles(array=cv2.imread("img/dots_clean.jpg", cv2.IMREAD_GRAYSCALE)):
+def findCircles(array=cv2.imread("../img/dots_clean.jpg", cv2.IMREAD_GRAYSCALE)):
     img = array  ## cv2.imread("../dots_clean.jpg", cv2.IMREAD_GRAYSCALE) if we not having an array
 
     ## Get a threshold from that array

@@ -5,8 +5,8 @@
 ## For the most part this code comes from  openCVmainpage.py
 
 
-from functions import *
-import os
+from obsolete.functions import *
+
 global precision
 precision = 255
 

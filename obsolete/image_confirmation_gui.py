@@ -1,7 +1,5 @@
 ## Brendan Ind 2020
 
-from functions import *
-
 def import_arrays():
     ## Import the arrays that we had from the previous code:
     with open("markers.txt", "r") as file:
