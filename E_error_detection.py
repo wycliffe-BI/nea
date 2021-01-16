@@ -1,6 +1,9 @@
 ## Brendan Ind 2020-2021 A-Level CS NEA
 ## Error Detection File
 
+import math
+
+
 def findDistance(pointA, pointB):
     ## Note, d before var i.e. "dx" means change in x.
 
@@ -63,5 +66,3 @@ def pythag(dy, dx):
     c = math.sqrt(cSquared)
 
     return c
-
-

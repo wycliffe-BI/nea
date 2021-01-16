@@ -7,7 +7,7 @@ proceed = False
 
 while not proceed:
     ## Get a frame of the camera
-    clean = get_frame()
+    clean = calib.get_frame()
 
     ## Get the ROI's for the filament and the markers
     filament = roi_select(clean, "Filament Selection", "Select the FILAMENT. Press C to cancel, ESC to exit, "

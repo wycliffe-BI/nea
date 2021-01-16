@@ -11,8 +11,10 @@ def c():
 def changeLabel(label, text):
     label.config(text=str(text))
 
+
 def newUser():
     print("Creating a new user")
+
 
 def login_page():
     window = tk.Tk()

@@ -16,11 +16,14 @@ import F_user_alert as alerts
 import G_3dp_control as control
 import misc
 
+markers = []
+filament = []
+clean = []
 proceed = False
 
 while not proceed:
     ## Get a frame of the camera
-    clean = calib.get_frame()
+    ok, clean = calib.get_frame()
 
     ## Get the ROI's for the filament and the markers
     filament = calib.roi_select(clean, "Filament Selection", "Select the FILAMENT. Press C to cancel, ESC to exit, "
@@ -55,20 +58,18 @@ while not proceed:
         will return the points we need to plt
         '''
 
+        ## Unpack the values
         x, y, w, h = i
-        print("RT:", (x, y), "   LB:", (x + w, y + h))
-        colour = (0, 0, 255)
-        frame_with_boxes = cv2.rectangle(frame_with_boxes, (x, y), (x + w, y + h), colour, 2)
+
+        ## Draw the rects.
+        frame_with_boxes = cv2.rectangle(frame_with_boxes, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
     for i in markers:
         ## Unpack the values
         x, y, w, h = i
 
-        ## Colour of these boxes:
-        colour = (255, 0, 0)
-
         ## Draw the rects.
-        frame_with_boxes = cv2.rectangle(frame_with_boxes, (x, y), (x + w, y + h), colour, 2)
+        frame_with_boxes = cv2.rectangle(frame_with_boxes, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
     ## Clean up
     cv2.waitKey(0)
@@ -80,19 +81,53 @@ while not proceed:
         print("Exit button was clicked in the tkinter window")
         sys.exit()
 print("Exited the loop with the correct arrays")
-##---------------------------------------------------------------##
+
+
+print("Marker Locations:" + str(markers), "\nFilament Locations:" + str(filament))
 
 ## Initiate some trackers:
+frame = clean
+ok1, marker_trackers = tracking.init_trackers(markers, frame)
+ok2, filament_trackers = tracking.init_trackers(filament, frame)
 
-## A dictionary to store all the tracker objects in
-trackers = {}
+if not (ok1 and ok2):
+    print("One of the two trackers failed to intiate")
+else:
+    print("Both marker and filament trackers are ok")
 
+print("marker_trackers:", marker_trackers)
+print("filament_trackers:", filament_trackers)
+
+cap = cv2.VideoCapture(0)
 while True:
-    ##MAINLOOP
+    ## MAIN LOOP
 
     ## Update the frame
-    frame = calib.get_frame()
+    ok, frame = cap.read()
 
     ## If frame is False bool then camera not captured correctly
-    if not frame:
+    if not ok:
         print("Capture Error")
+        break
+
+    ## Update the marker trackers and put bbox on them
+    for i in marker_trackers:
+        ok, bbox = i.update(frame)
+        if not ok:
+            print("Lost a marker tracker")
+        frame = cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3])),
+                              (255, 0, 0), 2, 1)
+
+    ## Update the filament trackers and put a box on them
+    for i in filament_trackers:
+        ok, bbox = i.update(frame)
+        if not ok:
+            print("Lost a filament tracker")
+        frame = cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3])),
+                              (0, 0, 255), 2, 1)
+
+    cv2.imshow("PRINTER", frame)
+
+    k = cv2.waitKey(1) & 0xff
+    if k == 27:
+        break

@@ -7,16 +7,16 @@ from win10toast import ToastNotifier
 
 toaster = ToastNotifier()
 
+
 def get_frame():
     warnings.filterwarnings("ignore", category=FutureWarning)
     cap = cv2.VideoCapture(0)
-    frame = cap.read()
     ok, frame = cap.read(0)
     if not ok:
         return False
     cap.release()
     warnings.filterwarnings("default", category=FutureWarning)
-    return frame
+    return ok, frame
 
 
 def roi_select(array, toast_title, winName="ERROR YOU HAVEN'T NAMED THIS WINDOW!!"):
