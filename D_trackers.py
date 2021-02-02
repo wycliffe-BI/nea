@@ -4,19 +4,22 @@
 import cv2
 
 
-def init_trackers(array, frame, trackertype=cv2.TrackerMIL_create()):
-    """
+def tracker_init(array, frame, multi=True, multiTracker=cv2.legacy.MultiTracker_create(),
+                 singleTracker=cv2.TrackerKCF_create(), legacySingleTracker=cv2.legacy.TrackerMIL_create()):
+    ok = []
 
-    :param array: This is the array with the bboxes enclosed in it, e.g. marker array
-    :param frame: This is the image that the tracker tracks
-    :param trackertype: Optional, sets the tracker object
-    :return: trackers, an array of all the objects
-    """
-    out = []
-    ok = True
-    for bbox in array:
-        trackingobject = trackertype
-        ok = trackingobject.init(frame, tuple(bbox))
-        out.append(trackingobject)
 
+
+    if multi:
+        ## We create a multi tracker object that efficiently tracks multiple points.
+        for bbox in array:
+            state = multiTracker.add(cv2.legacy.TrackerKCF_create(), frame, tuple(bbox))
+            ok.append(state)
+        out = multiTracker
+
+    else:
+        ## Only a single tracker is initiated and returned, and it takes the first of the array
+        state = singleTracker.init(frame, tuple(array))
+        ok.append(state)
+        out = singleTracker
     return ok, out
