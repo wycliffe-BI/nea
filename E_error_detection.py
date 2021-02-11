@@ -4,7 +4,7 @@
 import math
 
 
-def findDistance(pointA, pointB):
+def findDistance(pointA: object, pointB: object) -> object:
     ## Note, d before var i.e. "dx" means change in x.
 
     Ax = pointA[0]
@@ -66,3 +66,10 @@ def pythag(dy, dx):
     c = math.sqrt(cSquared)
 
     return c
+
+
+def bedAdhesion(actual, expected):
+    return 0
+
+def filamentOut(actual, expected):
+    return 0
