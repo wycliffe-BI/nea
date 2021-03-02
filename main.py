@@ -23,6 +23,9 @@ clean = []
 proceed = False
 toaster = ToastNotifier()
 cap = cv2.VideoCapture(0)
+thresh = 100
+expected_distance_set = False
+
 
 while not proceed:
     ok = False
@@ -110,19 +113,16 @@ fourcc = cv2.VideoWriter_fourcc(*'XVID')
 out = cv2.VideoWriter(filename='output.avi', apiPreference=cv2.CAP_FFMPEG, fourcc=fourcc, fps=20.0, frameSize=(
     frame.shape[1], frame.shape[0]))  # Make sure (width,height) is the shape of input frame from video
 
-## Make some lists that store the average distance between two points:
-## Note these get later made into single vars not lists so are overwritten
-ae = collections.deque(maxlen=5)
-be = collections.deque(maxlen=5)
-de = collections.deque(maxlen=5)
-ce = collections.deque(maxlen=5)
+## This is a fixed length array to ensure no more than 4 values are reported here
+current_dictionaries = collections.deque(maxlen=4)
+current_distances = collections.deque(maxlen=4)
 
-## good contains ae, be, ce, de but for expected values
-good = []
-
+## expected contains the expected distance values that we want
+expected = [100, 100, 100, 100]
 
 i = -1
 while True:
+    status = ""
     i += 1
     print("Mainloop Run #%s" % i)
 
@@ -154,6 +154,10 @@ while True:
     ## Draw the new MARKER boxes on the frame and find their centres
     marker_centres = []
     for bbox in markers:
+        ## Unless we specify otherwise, these values are good.
+        fil_tracker_good = True
+        marker_tracker_good = True
+
         ## find centre points and append them to an array for later
         ##centre x or y = bbox[1] + (bbox[3]/2)
         centrex = bbox[0] + (bbox[2] / 2)
@@ -165,24 +169,59 @@ while True:
         # print("Done %s out of %s markers" % (markers.indexOf(markers)+1, len(markers)))
         frame = cv2.circle(frame, (int(centrex), int(centrey)), 5, (0, 0, 255))
 
-        ## Draw line from fils to centre:
-        frame = cv2.line(frame, (int(centrex), int(centrey)), (int(filament_centre[0]), int(filament_centre[1])), (0, 255, 0), 5)
+        ## Draw line from fils to centre, but make sure that they are actually points that the
+        ## object tracking has given us. If they are (0, 0) then dont use them since they are
+        ## a "lack" of coords, not actual points. Its unlikely that they're actually points to be used.
+        if centrex != 0 and centrey != 0 and filament_centre[0] != 0 and filament_centre[1] != 0:
+            frame = cv2.line(frame, (int(centrex), int(centrey)), (int(filament_centre[0]), int(filament_centre[1])),
+                             (0, 255, 0), 5)
+        if centrex == 0 and centrey == 0:
+            cv2.putText(frame, "ERROR A MARKER TRACKER LOST", (150, 300),
+                        fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.8, color=(0, 0, 255))
+            marker_tracker_good = False
+        if filament_centre[0] == 0 and filament_centre[0] == 0:
+            cv2.putText(frame, "ERROR FIL TRACKER LOST", (150, 350),
+                        fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.8, color=(0, 0, 255))
+            fil_tracker_good = False
+
+        if fil_tracker_good and marker_tracker_good:
+            ## If both of our inputs are ok, then we record them to queue else we report zero:
+
+            # This line appends all the data bout the relations between the points to a dict then that's saved to a
+            # fixed length array:
+            current_dictionaries.append(err.findDistance([centrex, centrey], filament_centre))
+
+            ## This appends just the "dist" key form the dictionary, not the whole dictionary:
+            current_distances.append(err.findDistance([centrex, centrey], filament_centre)["dist"])
+        else:
+            current_distances.append("N.D")
+            current_dictionaries.append("N.D")
+
+    ## When we exit this loop we should always have the "current" array with 4 values in it of the latest distances.
+    ## And that value will be zero if something is wrong.
+
+    if (not expected_distance_set) and current_distances[0] != "N.D." and current_distances[1] != "N.D." and current_distances[2] != "N.D." and current_distances[3] != "N.D.":
+        ## This means that all the points have good distances
+        ## Set the expected as the INITIAL distances
+        expected = current_distances
+
+        ## Ensures that this doesnt run again and reset the expected values
+        expected_distance_set = True
 
 
-    # ae.append(err.findDistance(marker_centres[0], filament_centre))
-    # be.append(err.findDistance(marker_centres[1], filament_centre))
-    # ce.append(err.findDistance(marker_centres[2], filament_centre))
-    # de.append(err.findDistance(marker_centres[3], filament_centre))
+    bed_adhesion = err.bedAdhesion(current_dictionaries, current_distances, expected, thresh)
+    filament_run_out = err.filamentOut(current_dictionaries, expected, thresh)
 
-    ae = err.findDistance(marker_centres[0], filament_centre)
-    be = err.findDistance(marker_centres[1], filament_centre)
-    ce = err.findDistance(marker_centres[2], filament_centre)
-    de = err.findDistance(marker_centres[3], filament_centre)
-    current = [ae, be, ce, de]
+    ## Show the percentage error of the current vs expected
+    cv2.putText(frame, "%Err bed_adhesion: " + str(bed_adhesion["percentages"]), (100, 120), fontFace=cv2.FONT_HERSHEY_COMPLEX,
+                fontScale=0.8, color=(0, 255, 0))
+    #cv2.putText(frame, "%Err filament_run_out: " + str(filament_run_out["percentages"]), (100, 190), fontFace=cv2.FONT_HERSHEY_COMPLEX,
+    #            fontScale=0.8, color=(0, 255, 0))
+    cv2.putText(frame, "DISTS:" + str(current_distances), (0, 210), fontFace=cv2.FONT_HERSHEY_COMPLEX,
+                fontScale=0.4, color=(0, 0, 255))
 
-
-    bed_adhesion = err.bedAdhesion(current, good)
-    filament_run_out = err.filamentOut(current, good)
+    cv2.putText(frame, "STATUS:"+ status, (0, 250), fontFace=cv2.FONT_HERSHEY_COMPLEX,
+                fontScale=0.4, color=(0, 200, 200))
 
     ## Write that frame to the video object and display that frame to the GUI
     out.write(frame)
