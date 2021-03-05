@@ -2,9 +2,10 @@
 ## Error Detection File
 
 import math
+from collections import deque
 
 
-def findDistance(pointA: object, pointB: object) -> object:
+def findDistance(pointA: object, pointB: object, fullInfo=False) -> object:
     ## Note, d before var i.e. "dx" means change in x.
 
     Ax = pointA[0]
@@ -13,7 +14,7 @@ def findDistance(pointA: object, pointB: object) -> object:
     Bx = pointB[0]
     By = pointB[1]
 
-    print("Coords::     A:(%s, %s)   B:(%s, %s)" % (str(Ax), str(Ay), str(Bx), str(By)))
+    # print("Coords::     A:(%s, %s)   B:(%s, %s)" % (str(Ax), str(Ay), str(Bx), str(By)))
 
     # larger minus smaller gives the difference
 
@@ -59,12 +60,16 @@ def findDistance(pointA: object, pointB: object) -> object:
         bearing = 180 + internal_angle
 
     ## Return all our values in a list and two variables
-    return {
+    fulldict = {
         "dy": dx,
         "dx": dy,
         "dist": rawDistance,
         "bearing": bearing
     }
+    if fullInfo:
+        return fulldict
+    else:
+        return rawDistance
 
 
 def pythag(dy, dx):
@@ -76,74 +81,30 @@ def pythag(dy, dx):
     return c
 
 
-def bedAdhesion(actual_dicts, actual_lengths, expected_lengths, thresh):
-    actual_is_larger = True
-    result = True
-    ayes_nays = []
-    percentage_results = []
-    a_number = False
+def filamentOut(actual, expected, thresh):
+    return 0
 
+
+def percentage_error(actualArray, idealArray):
     ## Iterate though n times:
-    for i in range(0, len(actual_lengths)):
+    percentages = []
 
-        try:
-            actual_is_larger = (actual_lengths[i] > expected_lengths[i])
-            a_number = True
-        except:
-            a_number = False
+    ## Iterate through a zipped up version  (combines two arrays):
+    for actual, ideal in zip(actualArray, idealArray):
+        ## Make sure that they're actually numbers firstly:
+        if actual is not None and ideal is not None:
+            ## This will be true if actual is larger, else its false
+            actual_is_larger = (actual > ideal)
 
-        ## We have now ascertained if it is a number, or a failed tracker.
-        if not a_number:
             if actual_is_larger:
-                difference = float(actual_lengths[i]) - float(expected_lengths[i])
-                percentage = (difference / float(expected_lengths[i])) * 100
+                difference = float(actual) - float(ideal)
+                percentages.append(round(((difference / float(ideal)) * 100), 2))
 
             if not actual_is_larger:
-                difference = float(expected_lengths[i]) - float(actual_lengths[i])
-                percentage = (difference / float(expected_lengths[i])) * 100
-
-            else:
-                ## Actual is exactly the same as the expected, therefore zero percentage error!
-                percentage = 0
-
-            ## Now we compare the percentages against the threshold:
-            if percentage > thresh:
-                ## This is bad, the percentage error is larger than we hoped.
-                result = False
-
+                difference = float(ideal) - float(actual)
+                percentages.append(round(((difference / float(ideal)) * 100), 2))
         else:
-            ## This is if it's NOT a number:
-            percentage = "N/N"
+            ## Else its not a number, instead its NoneType
+            percentages.append(None)
 
-        ## Add this to the results
-        percentage_results.append(percentage)
-        ayes_nays.append(result)
-
-    ## We now need to analyse ayes_nays and decide out verdict:
-    ayes = 0
-    nays = 0
-    for i in ayes_nays:
-        ## We only count it if the eye/nay actually is one!
-        if i == True or i == False:
-            ## if i is false:
-            if not i:
-                nays += 1
-            ## Else if its True:
-            else:
-                ayes += 1
-
-    # Verdict is whoever wins. I.e. if the ayes win, then it will return true to the dict.
-    verdict = ayes > nays
-
-    return {
-        "percentages": percentage_results,
-        "verdict": verdict,
-        "ayes or nays": ayes_nays
-    }
-
-
-def filamentOut(actual, expected, thresh):
-    return {
-        "percentages": 0.0
-
-    }
+    return percentages

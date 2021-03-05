@@ -15,7 +15,7 @@ def close():
 def success():
     global ok
     ok = True
-    print("Success, arrays are good.")
+    #print("Success, arrays are good.")
 
 
 def fail():
