@@ -7,3 +7,4 @@ scikit-learn==0.24.0
 scipy~=1.6.0
 matplotlib~=3.3.3
 win10toast~=0.9
+twilio~=6.53.0
